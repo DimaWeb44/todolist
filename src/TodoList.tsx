@@ -55,7 +55,7 @@ export const TodoList = (props: TodoListPropsType) => {
                     </IconButton>
                 </h3>
                 <AddItemForm addItem={addTask}/>
-                <ul>{props.tasks.map((t) => {
+                <div>{props.tasks.map((t) => {
                     const onClickHandler = () => {
                         props.removeTask(t.id, props.id)
                     }
@@ -65,7 +65,7 @@ export const TodoList = (props: TodoListPropsType) => {
                     const onChangeTitleHandler = (newTitle: string) => {
                         props.changeTaskTitle(t.id, newTitle, props.id)
                     }
-                    return <li key={t.id} className={t.isDone ? "is-done" : ""}>
+                    return <div key={t.id} className={t.isDone ? "is-done" : ""}>
                         <Checkbox
                             checked={t.isDone}
                             onChange={onChangeStatusHandler}
@@ -74,10 +74,10 @@ export const TodoList = (props: TodoListPropsType) => {
                         <IconButton onClick={onClickHandler}>
                             <Delete/>
                         </IconButton>
-                    </li>
+                    </div>
                 })
                 }
-                </ul>
+                </div>
                 <div>
                     <Button color={"inherit"} variant={props.filter === "all" ? "contained" : "text"}  onClick={onAllClickHandler}>All
                     </Button>
