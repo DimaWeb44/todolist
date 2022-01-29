@@ -25,20 +25,20 @@ export type ChangeTodolistFilterActionType = {
     filter: FilterValuesType
 }
 
-export const RemoveTodolistAC = (todolistId: string): RemoveTodolistActionType => {
+export const removeTodolistAC = (todolistId: string): RemoveTodolistActionType => {
     return {type: 'REMOVE-TODOLIST', id: todolistId}
 }
-export const AddTodolistAC = (newTodolistTitle: string): AddTodolistActionType => {
+export const addTodolistAC = (newTodolistTitle: string): AddTodolistActionType => {
     return {type: 'ADD-TODOLIST', title: newTodolistTitle}
 }
-export const ChangeTodolistTitleAC = (title: string, id: string): ChangeTodolistTitleActionType => {
+export const changeTodolistTitleAC = (title: string, id: string): ChangeTodolistTitleActionType => {
     return {
         type: 'CHANGE-TODOLIST-TITLE',
         id: id,
         title: title
     }
 }
-export const ChangeTodolistFilterAC = (filter: FilterValuesType, id: string): ChangeTodolistFilterActionType => {
+export const changeTodolistFilterAC = (filter: FilterValuesType, id: string): ChangeTodolistFilterActionType => {
     return {
         type: 'CHANGE-TODOLIST-FILTER',
         id: id,
@@ -59,18 +59,20 @@ export const todolistsReducer = (state: Array<TodolistType>, action: ActionType)
             }]
         }
         case 'CHANGE-TODOLIST-TITLE': {
-            const todolist = state.find(tl => tl.id === action.id)
+            const stateCopy = [...state]
+            const todolist = stateCopy.find(tl => tl.id === action.id)
             if (todolist) {
                 todolist.title = action.title
             }
-            return [...state]
+            return stateCopy
         }
         case 'CHANGE-TODOLIST-FILTER': {
-            const todolist = state.find(tl => tl.id === action.id)
+            const stateCopy = [...state]
+            const todolist = stateCopy.find(tl => tl.id === action.id)
             if (todolist) {
                 todolist.filter = action.filter
             }
-            return [...state]
+            return stateCopy
         }
         default:
             throw new Error("I don't understand this type")
