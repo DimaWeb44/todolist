@@ -79,12 +79,13 @@ export const TodoList = (props: TodoListPropsType) => {
                 }
                 </div>
                 <div>
-                    <Button color={"inherit"} variant={props.filter === "all" ? "contained" : "text"}  onClick={onAllClickHandler}>All
+                    <Button color={"inherit"} variant={props.filter === "all" ? "contained" : "text"}
+                            onClick={onAllClickHandler}>All
                     </Button>
                     <Button variant={props.filter === "active" ? "contained" : "text"} color={"primary"}
                             onClick={onActiveClickHandler}>Active
                     </Button>
-                    <Button  variant={props.filter === "completed" ? "contained" : "text"} color={"secondary"}
+                    <Button variant={props.filter === "completed" ? "contained" : "text"} color={"secondary"}
                             onClick={onCompletedClickHandler}>Completed
                     </Button>
                 </div>
