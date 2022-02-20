@@ -13,7 +13,7 @@ export type RemoveTodolistActionType = {
 export type AddTodolistActionType = {
     type: 'ADD-TODOLIST'
     title: string
-    todolistID:string
+    todolistID: string
 }
 export type ChangeTodolistTitleActionType = {
     type: 'CHANGE-TODOLIST-TITLE'
@@ -30,7 +30,7 @@ export const removeTodolistAC = (todolistId: string): RemoveTodolistActionType =
     return {type: 'REMOVE-TODOLIST', id: todolistId}
 }
 export const addTodolistAC = (newTodolistTitle: string): AddTodolistActionType => {
-    return {type: 'ADD-TODOLIST', title: newTodolistTitle, todolistID:v1()}
+    return {type: 'ADD-TODOLIST', title: newTodolistTitle, todolistID: v1()}
 }
 export const changeTodolistTitleAC = (title: string, id: string): ChangeTodolistTitleActionType => {
     return {
@@ -47,35 +47,33 @@ export const changeTodolistFilterAC = (filter: FilterValuesType, id: string): Ch
     }
 }
 
-export const todolistsReducer = (state: Array<TodolistType>, action: ActionType): Array<TodolistType> => {
+export let todolistID1 = v1()
+
+const initialState: Array<TodolistType> = []
+
+export const todolistsReducer = (state: Array<TodolistType> = initialState, action: ActionType): Array<TodolistType> => {
     switch (action.type) {
         case 'REMOVE-TODOLIST': {
-            return state.filter((tl) => tl.id !== action.id)
+            return [...state].filter(tl => tl.id !== action.id)
         }
         case 'ADD-TODOLIST': {
-            return [...state, {
+            return [{
                 id: action.todolistID,
                 filter: "all",
                 title: action.title
-            }]
+            }, ...state]
         }
         case 'CHANGE-TODOLIST-TITLE': {
-            const stateCopy = [...state]
-            const todolist = stateCopy.find(tl => tl.id === action.id)
-            if (todolist) {
-                todolist.title = action.title
-            }
-            return stateCopy
+            return [...state].map(tl => tl.id === action.id ? {
+                ...tl, title: action.title
+            } : tl)
         }
         case 'CHANGE-TODOLIST-FILTER': {
-            const stateCopy = [...state]
-            const todolist = stateCopy.find(tl => tl.id === action.id)
-            if (todolist) {
-                todolist.filter = action.filter
-            }
-            return stateCopy
+            return [...state].map(tl => tl.id === action.id ? {
+                ...tl, filter: action.filter
+            } : tl)
         }
         default:
-            throw new Error("I don't understand this type")
+            return state;
     }
 }

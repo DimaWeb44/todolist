@@ -25,7 +25,7 @@ test('correct task should be removed', () => {
             {id: v1(), title: "bread", isDone: false},]
     }
 
-    const endState = tasksReducer(startState, removeTaskAC(todolistID1, id))
+    const endState = tasksReducer(startState, removeTaskAC(id, todolistID1))
 
     expect(endState[todolistID1].length).toBe(3);
     expect(endState[todolistID1][1].title).toBe('React');
@@ -47,7 +47,7 @@ test('correct task should be added', () => {
             {id: v1(), title: "bread", isDone: false},]
     }
 
-    const endState = tasksReducer(startState, addTaskAC(todolistID1, newTaskTitle))
+    const endState = tasksReducer(startState, addTaskAC(newTaskTitle, todolistID1))
 
     expect(endState[todolistID1].length).toBe(5);
     expect(endState[todolistID2].length).toBe(4);
@@ -72,7 +72,7 @@ test('correct task should change its title', () => {
             {id: v1(), title: "bread", isDone: false},]
     }
 
-    const action = changeTaskTitleAC(todolistID2, id, newTaskTitle)
+    const action = changeTaskTitleAC(id, newTaskTitle, todolistID2)
 
     const endState = tasksReducer(startState, action);
 
@@ -96,7 +96,7 @@ test('status of specified task should be changed', () => {
             {id: v1(), title: "bread", isDone: false},]
     }
 
-    const action = changeTaskStatusAC(todolistID2, id, isDone)
+    const action = changeTaskStatusAC(id, isDone, todolistID2)
 
     const endState = tasksReducer(startState, action);
 
