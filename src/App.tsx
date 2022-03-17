@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import './App.css';
 import {TaskType, TodoList} from "./TodoList";
 import {AddItemForm} from "./AddItemForm";
@@ -28,21 +28,21 @@ function App() {
     const dispatch = useDispatch()
     const todolists = useSelector<RootStateType, Array<TodolistType>>(state => state.todolists)
 
-    function changeTodolistTitle(newTitle: string, todolistID: string) {
+    const changeTodolistTitle = useCallback((newTitle: string, todolistID: string) => {
         dispatch(changeTodolistTitleAC(newTitle, todolistID))
-    }
+    }, [dispatch])
 
-    function changeFilter(value: FilterValuesType, todolistID: string) {
+    const changeFilter = useCallback((value: FilterValuesType, todolistID: string) => {
         dispatch(changeTodolistFilterAC(value, todolistID))
-    }
+    }, [dispatch])
 
-    let removeTodolist = (todolistID: string) => {
+    const removeTodolist = useCallback((todolistID: string) => {
         dispatch(removeTodolistAC(todolistID))
-    }
+    }, [dispatch])
 
-    function addTodolist(title: string) {
+    const addTodolist = useCallback((title: string) => {
         dispatch(addTodolistAC(title))
-    }
+    }, [dispatch])
 
     return (
         <div className="App">
@@ -69,7 +69,7 @@ function App() {
                 </Grid>
                 <Grid container spacing={3}>
                     {todolists.map(tl => {
-                        return <Grid item>
+                        return <Grid item key={tl.id}>
                             <Paper style={{padding: '10px'}}>
                                 <TodoList
                                     key={tl.id}
