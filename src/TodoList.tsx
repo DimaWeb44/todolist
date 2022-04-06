@@ -1,5 +1,4 @@
 import React, {useCallback} from 'react';
-import {FilterValuesType} from "./App";
 import {AddItemForm} from "./AddItemForm";
 import {EditableSpan} from "./EditableSpan";
 import {Button, IconButton} from "@mui/material";
@@ -8,13 +7,9 @@ import {useDispatch, useSelector} from "react-redux";
 import {RootStateType} from "./state/store";
 import {addTaskAC} from "./state/tasks-reducer";
 import {Task} from "./Task";
+import {TaskStatuses, TaskType} from './api/todolists-api';
+import {FilterValuesType} from "./state/todolists-reducer";
 
-
-export type TaskType = {
-    id: string
-    title: string
-    isDone: boolean
-}
 type TodoListPropsType = {
     id: string
     title: string
@@ -52,41 +47,41 @@ export const TodoList = React.memo((props: TodoListPropsType) => {
 
     let tasksForTodolist = tasks
     if (props.filter === "completed") {
-        tasksForTodolist = tasksForTodolist.filter(t => t.isDone)
+        tasksForTodolist = tasksForTodolist.filter(t => t.status === TaskStatuses.Completed)
     }
     if (props.filter === "active") {
-        tasksForTodolist = tasksForTodolist.filter(t => !t.isDone)
+        tasksForTodolist = tasksForTodolist.filter(t => t.status === TaskStatuses.New)
     }
 
     return (
         <div>
-                <h3><EditableSpan title={props.title} onChang={changeTodolistTitle}/>
-                    <IconButton onClick={removeTodolist}>
-                        <Delete/>
-                    </IconButton>
-                </h3>
-                <AddItemForm addItem={useCallback((title) => {
-                    dispatch(addTaskAC(title, props.id))
-                }, [props.id])}/>
-                <div>
-                    {tasksForTodolist.map((t) => {
-                       return <Task task={t}
-                                    todolistId={props.id}
-                                    key={t.id}
-                       />
-                    })}
-                </div>
-                <div>
-                    <Button color={"inherit"} variant={props.filter === "all" ? "contained" : "text"}
-                            onClick={onAllClickHandler}>All
-                    </Button>
-                    <Button variant={props.filter === "active" ? "contained" : "text"} color={"primary"}
-                            onClick={onActiveClickHandler}>Active
-                    </Button>
-                    <Button variant={props.filter === "completed" ? "contained" : "text"} color={"secondary"}
-                            onClick={onCompletedClickHandler}>Completed
-                    </Button>
-                </div>
+            <h3><EditableSpan title={props.title} onChang={changeTodolistTitle}/>
+                <IconButton onClick={removeTodolist}>
+                    <Delete/>
+                </IconButton>
+            </h3>
+            <AddItemForm addItem={useCallback((title) => {
+                dispatch(addTaskAC(title, props.id))
+            }, [props.id])}/>
+            <div>
+                {tasksForTodolist.map((t) => {
+                    return <Task task={t}
+                                 todolistId={props.id}
+                                 key={t.id}
+                    />
+                })}
+            </div>
+            <div>
+                <Button color={"inherit"} variant={props.filter === "all" ? "contained" : "text"}
+                        onClick={onAllClickHandler}>All
+                </Button>
+                <Button variant={props.filter === "active" ? "contained" : "text"} color={"primary"}
+                        onClick={onActiveClickHandler}>Active
+                </Button>
+                <Button variant={props.filter === "completed" ? "contained" : "text"} color={"secondary"}
+                        onClick={onCompletedClickHandler}>Completed
+                </Button>
+            </div>
         </div>
     );
 })

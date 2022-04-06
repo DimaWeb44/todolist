@@ -1,7 +1,7 @@
 import {TasksStateType} from "../App";
 import {v1} from "uuid";
-import {TaskType} from "../TodoList";
-import {AddTodolistActionType, RemoveTodolistActionType, todolistID1} from "./todolists-reducer";
+import {AddTodolistActionType, RemoveTodolistActionType} from "./todolists-reducer";
+import {TaskPriorities, TaskStatuses} from "../api/todolists-api";
 
 type TaskActionType =
     RemoveTaskActionType
@@ -30,7 +30,7 @@ export type ChangeTaskStatusActionType = {
     type: 'CHANGE-TASK-STATUS'
     todolistID: string
     taskID: string
-    isDone: boolean
+    status: TaskStatuses
 }
 
 export const removeTaskAC = (id: string, todolistId: string): RemoveTaskActionType => {
@@ -47,12 +47,12 @@ export const changeTaskTitleAC = (id: string, title: string, todolistId: string)
         newTitle: title
     }
 }
-export const changeTaskStatusAC = (id: string, isDone: boolean, todolistId: string): ChangeTaskStatusActionType => {
+export const changeTaskStatusAC = (id: string, status: TaskStatuses, todolistId: string): ChangeTaskStatusActionType => {
     return {
         type: 'CHANGE-TASK-STATUS',
         todolistID: todolistId,
         taskID: id,
-        isDone: isDone
+        status
     }
 }
 
@@ -71,7 +71,17 @@ export const tasksReducer = (state: TasksStateType = initialState, action: TaskA
         case 'ADD-TASK': {
             const stateCopy = {...state}
             const tasks = stateCopy[action.todolistID]
-            stateCopy[action.todolistID] = [{id: v1(), title: action.title, isDone: false}, ...tasks]
+            stateCopy[action.todolistID] = [{
+                id: v1(),
+                title: action.title,
+                status: TaskStatuses.New,
+                addedDate: '',
+                deadline: '',
+                description: '',
+                order: 0,
+                priority: TaskPriorities.Urgently,
+                startDate: '',
+                todoListId: action.todolistID}, ...tasks]
             return stateCopy
         }
         case 'CHANGE-TASK-TITLE': {
@@ -86,7 +96,7 @@ export const tasksReducer = (state: TasksStateType = initialState, action: TaskA
             const stateCopy = {...state}
             const tasks = stateCopy[action.todolistID]
             stateCopy[action.todolistID] = tasks.map(t => t.id === action.taskID ? {
-                ...t, isDone: action.isDone
+                ...t, status: action.status
             } : t)
             return stateCopy
         }
