@@ -5,13 +5,13 @@ import {AddItemForm} from "./AddItemForm";
 import {AppBar, Button, Container, Grid, IconButton, Paper, Toolbar, Typography} from "@mui/material";
 import MenuIcon from '@mui/icons-material/Menu';
 import {
-    addTodolistAC,
     changeTodolistFilterAC,
-    changeTodolistTitleAC,
+    createTodolistTC,
+    deleteTodolistTC,
     FilterValuesType,
     getTodolistsTC,
-    removeTodolistAC,
-    TodolistDomainType
+    TodolistDomainType,
+    updateTodolistTitleTC
 } from "./state/todolists-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {RootStateType} from "./state/store";
@@ -30,7 +30,7 @@ function App() {
     }, [])
 
     const changeTodolistTitle = useCallback((newTitle: string, todolistID: string) => {
-        dispatch(changeTodolistTitleAC(newTitle, todolistID))
+        dispatch(updateTodolistTitleTC(todolistID, newTitle))
     }, [dispatch])
 
     const changeFilter = useCallback((value: FilterValuesType, todolistID: string) => {
@@ -38,11 +38,11 @@ function App() {
     }, [dispatch])
 
     const removeTodolist = useCallback((todolistID: string) => {
-        dispatch(removeTodolistAC(todolistID))
+        dispatch(deleteTodolistTC(todolistID))
     }, [dispatch])
 
     const addTodolist = useCallback((title: string) => {
-        dispatch(addTodolistAC(title))
+        dispatch(createTodolistTC(title))
     }, [dispatch])
 
     return (
