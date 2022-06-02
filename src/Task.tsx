@@ -1,8 +1,8 @@
 import {useDispatch} from "react-redux";
-import {changeTaskStatusAC, deleteTasksTC, updateTaskStatusTC, updateTaskTitleTC} from "./state/tasks-reducer";
+import {deleteTasksTC, updateTaskStatusTC, updateTaskTitleTC} from "./state/tasks-reducer";
 import React, {ChangeEvent, useCallback} from "react";
 import {Checkbox, IconButton} from "@mui/material";
-import {EditableSpan} from "./EditableSpan";
+import {EditableSpan} from "./components/EditaleSpan/EditableSpan";
 import {Delete} from "@mui/icons-material";
 import {TaskStatuses, TaskType} from "./api/todolists-api";
 
