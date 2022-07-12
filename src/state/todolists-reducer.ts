@@ -1,6 +1,6 @@
-import {v1} from "uuid";
 import {todolistsAPI, TodolistType} from "../api/todolists-api";
 import {Dispatch} from "redux";
+import {RequestStatusType, setStatusAC} from "./app-reducer";
 
 type ActionType =
     | ReturnType<typeof removeTodolistAC>
@@ -10,7 +10,7 @@ type ActionType =
     | ReturnType<typeof setTodolistsAC>
 
 export type FilterValuesType = "all" | "completed" | "active"
-export type TodolistDomainType = TodolistType & { filter: FilterValuesType }
+export type TodolistDomainType = TodolistType & { filter: FilterValuesType, entityStatus: RequestStatusType }
 
 //action
 export const removeTodolistAC = (todolistId: string) => ({type: 'REMOVE-TODOLIST', id: todolistId} as const)
@@ -21,9 +21,11 @@ export const setTodolistsAC = (todolists: Array<TodolistType>) => ({type: 'SET-T
 
 //thunk
 export const getTodolistsTC = () => (dispatch: Dispatch) => {
+    dispatch(setStatusAC('loading'))
     todolistsAPI.getTodolists()
         .then((res) => {
             dispatch(setTodolistsAC(res.data));
+            dispatch(setStatusAC('succeeded'))
         })
 }
 export const deleteTodolistTC = (todolistId: string) => (dispatch: Dispatch) => {
@@ -61,13 +63,13 @@ export const todolistsReducer = (state: Array<TodolistDomainType> = initialState
         case 'REMOVE-TODOLIST':
             return [...state].filter(tl => tl.id !== action.id)
         case 'ADD-TODOLIST':
-            return [{...action.todolist, filter: "all",}, ...state]
+            return [{...action.todolist, filter: "all", entityStatus: "idle"}, ...state]
         case 'CHANGE-TODOLIST-TITLE':
             return [...state].map(tl => tl.id === action.id ? {...tl, title: action.title} : tl)
         case 'CHANGE-TODOLIST-FILTER':
             return [...state].map(tl => tl.id === action.id ? {...tl, filter: action.filter} : tl)
         case 'SET-TODOLISTS':
-            return action.todolists.map(tl => ({...tl, filter: 'all'}))
+            return action.todolists.map(tl => ({...tl, filter: 'all', entityStatus: "idle"}))
         default:
             return state;
     }

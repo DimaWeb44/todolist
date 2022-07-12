@@ -3,6 +3,7 @@ import {TaskStatuses, TaskType, todolistsAPI, UpdateTaskType} from "../api/todol
 import {addTodolistAC, removeTodolistAC, setTodolistsAC} from "./todolists-reducer";
 import {Dispatch} from "redux";
 import {RootStateType} from "./store";
+import {setErrorAC, setStatusAC} from "./app-reducer";
 
 type TaskActionType =
     | ReturnType<typeof addTaskAC>
@@ -45,22 +46,32 @@ export const setTasksAC = (tasks: Array<TaskType>, todolistID: string) => ({
 
 //thunk
 export const getTasksTC = (id: string) => (dispatch: Dispatch) => {
+    dispatch(setStatusAC('loading'))
     todolistsAPI.getTasks(id)
         .then((res) => {
             dispatch(setTasksAC(res.data.items, id));
+            dispatch(setStatusAC('succeeded'))
         })
 }
 export const deleteTasksTC = (todolistId: string, taskId: string) => (dispatch: Dispatch) => {
+    dispatch(setStatusAC('loading'))
     todolistsAPI.deleteTask(todolistId, taskId).then((res) => {
         if (res.data.resultCode === 0) {
             dispatch(removeTaskAC(taskId, todolistId))
+            dispatch(setStatusAC('succeeded'))
         }
     })
 }
 export const createTaskTC = (todolistId: string, title: string) => (dispatch: Dispatch) => {
+    dispatch(setStatusAC('loading'))
     todolistsAPI.createTask(todolistId, title).then((res) => {
         if (res.data.resultCode === 0) {
             dispatch(addTaskAC(res.data.data.item))
+            dispatch(setStatusAC('succeeded'))
+        } else {
+            if (res.data.messages.length) {
+                dispatch(setErrorAC(res.data.messages[0]))
+            } else {dispatch(setErrorAC("Some error occurred"))}
         }
     })
 }
@@ -116,20 +127,29 @@ export const tasksReducer = (state: TasksStateType = initialState, action: TaskA
         case 'ADD-TASK':
             return {...state, [action.task.todoListId]: [action.task, ...state[action.task.todoListId]]}
         case 'CHANGE-TASK-TITLE':
-            return {...state, [action.todolistID]: state[action.todolistID].map(t => t.id === action.taskID ? {
-                    ...t, title: action.newTitle} : t)}
+            return {
+                ...state, [action.todolistID]: state[action.todolistID].map(t => t.id === action.taskID ? {
+                    ...t, title: action.newTitle
+                } : t)
+            }
         case 'CHANGE-TASK-STATUS':
-            return {...state, [action.todolistID]: state[action.todolistID].map(t => t.id === action.taskID ? {
-                    ...t, status: action.status} : t)}
+            return {
+                ...state, [action.todolistID]: state[action.todolistID].map(t => t.id === action.taskID ? {
+                    ...t, status: action.status
+                } : t)
+            }
         case 'ADD-TODOLIST':
             return {...state, [action.todolist.id]: []}
-        case "REMOVE-TODOLIST":{
+        case "REMOVE-TODOLIST": {
             const stateCopy = {...state,}
             delete {...state}[action.id]
-            return stateCopy}
+            return stateCopy
+        }
         case 'SET-TODOLISTS':
             const stateCopy = {...state}
-            action.todolists.forEach((tl) => {stateCopy[tl.id] = []})
+            action.todolists.forEach((tl) => {
+                stateCopy[tl.id] = []
+            })
             return stateCopy;
         case 'SET-TASKS':
             return {...state, [action.todolistID]: action.tasks}
